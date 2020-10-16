@@ -9,12 +9,17 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_signup.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import ru.raider.date.MainActivity
 import ru.raider.date.R
+import ru.raider.date.RaiderAPI
+import sha256
 
 class SignupActivity : AppCompatActivity() {
 
-    val MIN_PASSWORD_LENGTH = 6;
+    private val MIN_PASSWORD_LENGTH = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,49 +29,45 @@ class SignupActivity : AppCompatActivity() {
     }
 
     // Checking if the input in form is valid
-    fun validateInput(): Boolean {
+    private fun validateInput(): Boolean {
         if (et_first_name.text.toString().equals("")) {
-            et_first_name.setError("Please Enter First Name")
+            et_first_name.error = "Имя введи"
             return false
         }
         if (et_last_name.text.toString().equals("")) {
-            et_last_name.setError("Please Enter Last Name")
+            et_last_name.error = "Фамилию введи"
             return false
         }
         if (et_email.text.toString().equals("")) {
-            et_email.setError("Please Enter Email")
+            et_email.error = "Почту введи"
+            return false
+        }
+        if (et_age.text.toString().toInt() < 18 ||
+                et_age.text.toString().toInt() > 100) {
+            et_age.error = "Возраст от 18 до 100"
             return false
         }
         if (et_password.text.toString().equals("")) {
-            et_password.setError("Please Enter Password")
-            return false
-        }
-        if (et_repeat_password.text.toString().equals("")) {
-            et_repeat_password.setError("Please Enter Repeat Password")
+            et_password.error = "Надо ввести пароль"
             return false
         }
 
         // checking the proper email format
         if (!isEmailValid(et_email.text.toString())) {
-            et_email.setError("Please Enter Valid Email")
+            et_email.error = "Почта кал"
             return false
         }
 
         // checking minimum password Length
         if (et_password.text.length < MIN_PASSWORD_LENGTH) {
-            et_password.setError("Password Length must be more than " + MIN_PASSWORD_LENGTH + "characters")
+            et_password.error = "В пароле должно быть не менее " + MIN_PASSWORD_LENGTH + "знаков"
             return false
         }
 
-        // Checking if repeat password is same
-        if (!et_password.text.toString().equals(et_repeat_password.text.toString())) {
-            et_repeat_password.setError("Password does not match")
-            return false
-        }
         return true
     }
 
-    fun isEmailValid(email: String): Boolean {
+    private fun isEmailValid(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
@@ -80,20 +81,29 @@ class SignupActivity : AppCompatActivity() {
             val firstName = et_first_name.text.toString()
             val lastName = et_last_name.text.toString()
             val email = et_email.text.toString()
-            val password = et_password.text.toString()
-            val repeatPassword = et_repeat_password.text.toString()
-
-            Toast.makeText(this,"Login Success",Toast.LENGTH_SHORT).show()
-            // Here you can call you API\
-            val sharedPref: SharedPreferences = getSharedPreferences("ru.raider.date.shared", Context.MODE_PRIVATE)
-            with (sharedPref.edit()) {
-                putBoolean("LoggedIn", true)
-                apply()
-            }
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-
+            val password = et_password.text.toString().sha256()
+            val age = et_age.text.toString().toInt()
+            val user = User(firstName, lastName, email, password, age)
+            RaiderAPI().signup(user).enqueue(object : Callback<String> {
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    Toast.makeText(this@SignupActivity,"KAL ошибка в запросе",Toast.LENGTH_SHORT).show()
+                }
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    if (response.body() == "Success") {
+                        Toast.makeText(this@SignupActivity, "Login Success", Toast.LENGTH_SHORT).show()
+                        // Here you can call you API\
+                        val sharedPref: SharedPreferences = getSharedPreferences("ru.raider.date.shared", Context.MODE_PRIVATE)
+                        with (sharedPref.edit()) {
+                            putBoolean("LoggedIn", true)
+                            apply()
+                        }
+                        val intent = Intent(this@SignupActivity, MainActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this@SignupActivity,"KAL " + response.body(),Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
         }
     }
-
 }
