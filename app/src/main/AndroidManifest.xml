@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.raider.date">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,11 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RAIDER">
-        <activity android:name=".chat.MessagesActivity" />
+        <activity android:name=".ProfileActivity"></activity>
+
         <activity android:name=".chat.ChatActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".chat.MessagesActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity android:name=".auth.LoginActivity">
             <intent-filter>
@@ -25,7 +28,5 @@
         <activity android:name=".auth.SignupActivity" />
         <activity android:name=".MainActivity" />
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

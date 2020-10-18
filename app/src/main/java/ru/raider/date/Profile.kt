@@ -7,3 +7,4 @@ data class Profile(
     val name: String,
     val profile_pic: String
 )
+

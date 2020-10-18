@@ -1,5 +1,6 @@
 package ru.raider.date
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,7 +14,6 @@ import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
 import com.yuyakaido.android.cardstackview.SwipeableMethod
-import kotlinx.android.synthetic.main.explore_fragment.*
 import kotlinx.android.synthetic.main.explore_fragment.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,6 +43,12 @@ class ExploreFragment : Fragment(), CardStackListener {
             setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
             setOverlayInterpolator(LinearInterpolator())
         }
+
+        rootView.imageButton.setOnClickListener{
+            val ProfileAct: Intent = Intent(it.context, ProfileActivity::class.java)
+            startActivity(ProfileAct)
+        }
+
 
 
         rootView.stack_view.layoutManager = layoutManager
