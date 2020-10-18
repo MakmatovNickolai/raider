@@ -1,27 +1,31 @@
 package ru.raider.date.auth
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
+import retrofit2.Call
+import ru.raider.date.api.RaiderApiClient
+import retrofit2.Callback
+import retrofit2.Response
 import ru.raider.date.MainActivity
 import ru.raider.date.R
 
 class LoginActivity : AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiClient: RaiderApiClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPref: SharedPreferences = getSharedPreferences("ru.raider.date.shared", Context.MODE_PRIVATE)
-        val logged = sharedPref.getBoolean("LoggedIn", false)
-        if (logged) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        } else {
+        sessionManager = SessionManager(this)
+        if (sessionManager.fetchAuthToken().isNullOrEmpty()) {
             setContentView(R.layout.activity_login)
+        } else {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
         }
     }
 
@@ -31,18 +35,32 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun sign_in(view: View) {
-        val user_name = loginEmail.text;
-        val password = loginPassword.text;
-        Toast.makeText(this@LoginActivity, user_name, Toast.LENGTH_LONG).show()
+        val email = loginEmail.text.toString()
+        val password = loginPassword.text.toString()
+        val user =
+            LoginRequest(email = email, password = password)
 
-        val sharedPref: SharedPreferences = getSharedPreferences("ru.raider.date.shared", Context.MODE_PRIVATE)
-        with (sharedPref.edit()) {
-            putBoolean("LoggedIn", true)
-            apply()
-        }
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        // your code to validate the user_name and password combination
-        // and verify the same
+        apiClient = RaiderApiClient()
+
+        apiClient.getApiService(this).signin(user).enqueue(object : Callback<LoginResponse> {
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                Toast.makeText(this@LoginActivity,"KAL ошибка в запросе",Toast.LENGTH_SHORT).show()
+            }
+            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                val loginResponse = response.body()
+                if (loginResponse != null) {
+                    if (loginResponse.error.equals("")) {
+                        sessionManager.saveAuthToken(loginResponse.authToken)
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this@LoginActivity, loginResponse.error, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@LoginActivity, "Ошибка", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
 }

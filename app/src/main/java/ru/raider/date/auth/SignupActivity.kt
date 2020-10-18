@@ -14,13 +14,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import ru.raider.date.MainActivity
 import ru.raider.date.R
-import ru.raider.date.RaiderAPI
+import ru.raider.date.api.RaiderApiClient
 import sha256
 
 class SignupActivity : AppCompatActivity() {
 
     private val MIN_PASSWORD_LENGTH = 6
-
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiClient: RaiderApiClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
@@ -83,24 +84,26 @@ class SignupActivity : AppCompatActivity() {
             val email = et_email.text.toString()
             val password = et_password.text.toString().sha256()
             val age = et_age.text.toString().toInt()
-            val user = User(firstName, lastName, email, password, age)
-            RaiderAPI().signup(user).enqueue(object : Callback<String> {
-                override fun onFailure(call: Call<String>, t: Throwable) {
+            val user = SignupRequest(firstName, lastName, email, password, age)
+
+            apiClient = RaiderApiClient()
+            sessionManager = SessionManager(this)
+
+            apiClient.getApiService(this).signup(user).enqueue(object : Callback<SignupResponse> {
+                override fun onFailure(call: Call<SignupResponse>, t: Throwable) {
                     Toast.makeText(this@SignupActivity,"KAL ошибка в запросе",Toast.LENGTH_SHORT).show()
                 }
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    if (response.body() == "Success") {
-                        Toast.makeText(this@SignupActivity, "Login Success", Toast.LENGTH_SHORT).show()
-                        // Here you can call you API\
-                        val sharedPref: SharedPreferences = getSharedPreferences("ru.raider.date.shared", Context.MODE_PRIVATE)
-                        with (sharedPref.edit()) {
-                            putBoolean("LoggedIn", true)
-                            apply()
+                override fun onResponse(call: Call<SignupResponse>, response: Response<SignupResponse>) {
+                    val loginResponse = response.body()
+                    if (loginResponse != null) {
+                        if (loginResponse.error == "" && loginResponse.authToken != "") {
+                            sessionManager.saveAuthToken(loginResponse.authToken)
+                            val intent = Intent(this@SignupActivity, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                        } else {
+                            Toast.makeText(this@SignupActivity,"KAL " + response.body(),Toast.LENGTH_SHORT).show()
                         }
-                        val intent = Intent(this@SignupActivity, MainActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(this@SignupActivity,"KAL " + response.body(),Toast.LENGTH_SHORT).show()
                     }
                 }
             })
