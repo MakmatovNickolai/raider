@@ -8,5 +8,9 @@
     tools:context=".MainActivity">
 
 
-
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="396dp"
+        android:text="TextViddddddddddddddddddddddddddddew" />
 </LinearLayout>

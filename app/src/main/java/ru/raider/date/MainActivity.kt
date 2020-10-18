@@ -4,93 +4,54 @@ import android.content.Intent
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.view.animation.LinearInterpolator
-import androidx.recyclerview.widget.DefaultItemAnimator
-import com.facebook.drawee.backends.pipeline.Fresco
-import com.google.android.material.bottomnavigation.BottomNavigationMenu
+import androidx.appcompat.app.ActionBar
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.yuyakaido.android.cardstackview.CardStackLayoutManager
-import com.yuyakaido.android.cardstackview.CardStackListener
-import com.yuyakaido.android.cardstackview.Direction
-import com.yuyakaido.android.cardstackview.SwipeableMethod
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import ru.raider.date.api.RaiderApiClient
-import ru.raider.date.auth.SessionManager
-import ru.raider.date.auth.SimpleResponse
-import ru.raider.date.chat.MessagesActivity
 
-class MainActivity : AppCompatActivity(), CardStackListener {
+class MainActivity : AppCompatActivity() {
 
 
-
+    lateinit var toolbar: ActionBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fresco.initialize(this)
+
         setContentView(R.layout.activity_main)
 
+        toolbar = supportActionBar!!
         bottomNavigationMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-
-    }
-
-    override fun onCardDisappeared(view: View?, position: Int) {
-
-    }
-
-    override fun onCardDragging(direction: Direction?, ratio: Float) {
-
-    }
-
-    override fun onCardSwiped(direction: Direction?) {
-        direction?.name?.let { Log.v("DEV", it) }
-        if (direction == Direction.Right) {
-            like()
+        if (savedInstanceState == null) {
+            bottomNavigationMenu.selectedItemId = R.id.navigation_explore;
         }
-    }
-
-    override fun onCardCanceled() {
-
-    }
-
-    override fun onCardAppeared(view: View?, position: Int) {
-
-    }
-
-    override fun onCardRewound() {
 
     }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
         when (menuItem.itemId) {
             R.id.navigation_explore -> {
-                val fragment = BlogFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.container, fragment, fragment.javaClass.getSimpleName())
-                    .commit()
+                val exploreFragment = ExploreFragment.newInstance()
+                openFragment(exploreFragment)
                 return@OnNavigationItemSelectedListener true
+
             }
             R.id.navigation_messages -> {
-                val fragment = ChapterFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.container, fragment, fragment.javaClass.getSimpleName())
-                    .commit()
+                val messagesFragment = MessagesFragment.newInstance()
+                openFragment(messagesFragment)
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_profile -> {
-                val fragment = StoreFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.container, fragment, fragment.javaClass.getSimpleName())
-                    .commit()
+            R.id.navigation_test -> {
+                val profileFragment = TestFragment.newInstance()
+                openFragment(profileFragment)
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
 
-
-
-    fun openMessagesActivity(view: View) {
-        val intent = Intent(this, MessagesActivity::class.java)
-        startActivity(intent)
+    private fun openFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }
