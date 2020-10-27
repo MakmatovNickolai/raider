@@ -9,21 +9,18 @@
         android:id="@+id/itemMessageFrom"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@color/cardview_light_background"
+        android:textColor="@color/black"
+        android:background="@drawable/message_from"
         android:maxWidth="300dp"
-        android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/imageViewFrom"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="23dp"
+        android:paddingTop="8dp"
+        android:text="TextViewsssssssssssssssssssssssssssssssssssssssssssssssssssssaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaassssss"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageViewFrom"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/emma_watson"
-         />
 </androidx.constraintlayout.widget.ConstraintLayout>

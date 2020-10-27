@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_explore"
-        android:icon="@drawable/abc_vector_test"
+        android:icon="@drawable/ic_baseline_local_fire_department_24"
         android:title="Главная"/>
 
     <item
         android:id="@+id/navigation_messages"
-        android:icon="@drawable/abc_vector_test"
+        android:icon="@drawable/ic_baseline_chat_24"
         android:title="Сообщения"/>
 
     <item
         android:id="@+id/navigation_test"
-        android:icon="@drawable/abc_vector_test"
+        android:icon="@drawable/ic_baseline_favorite_24"
         android:title="Хз пока что"/>
 </menu>

@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="profile_back">#105C2E</color>
     <color name="colorPrimary">#25A62A</color>
+    <color name="mainAppColor">#A8150A</color>
+    <color name="softGrey">#A19C8B</color>
 </resources>

@@ -8,21 +8,18 @@
     <TextView
         android:id="@+id/itemMessageTo"
         android:layout_width="0dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@color/cardview_light_background"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/message_to"
         android:maxWidth="300dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toStartOf="@+id/imageViewTo"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageViewTo"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:text="TextViewsssssssssssssssssssssssssssssssssssssssssssssssssssssaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaassssss"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/emma_watson" />
+        android:paddingRight="53dp"
+        android:paddingLeft="8dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
