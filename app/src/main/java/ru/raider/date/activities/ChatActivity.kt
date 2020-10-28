@@ -27,7 +27,8 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        supportActionBar?.title = intent.getStringExtra("userName")
+        supportActionBar?.title = intent.getStringExtra("username")
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toUserId = intent.getStringExtra("toUserId")!!
         roomId = intent.getStringExtra("roomId")!!
         chatMessagesRecycler.adapter = adapter
@@ -53,9 +54,16 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     fun sendMessage(view: View) {
+
         val messageText = inputMessage.text.toString()
         val message = Message(id = UUID.randomUUID().toString(), message = messageText, fromUserId = toUserId, roomId = roomId)
+        inputMessage.text.clear()
         adapter.add(MessageToItem(message))
         apiClient.getApiService(this).sendMessage(message).enqueue(object : Callback<SimpleResponse> {
             override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
@@ -67,7 +75,7 @@ class ChatActivity : AppCompatActivity() {
             override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
                 val simpleResponse = response.body()
                 simpleResponse?.let {
-                    Log.i("DEV", simpleResponse.result.toString())
+                    Log.i("DEV", simpleResponse.result)
                 }
             }
         })

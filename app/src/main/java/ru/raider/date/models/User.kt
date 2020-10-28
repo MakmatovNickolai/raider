@@ -9,6 +9,6 @@ data class User (
         @SerializedName("age") val age: Int,
         @SerializedName("picture_url") val pictureUrl: String,
         @SerializedName("sex") val sex: String,
-        @SerializedName("email") val email: String,
-        @SerializedName("password") val password: String
+        @SerializedName("email") val email: String?,
+        @SerializedName("password") val password: String?
 )

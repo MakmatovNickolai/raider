@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun sign_in(view: View) {
+    fun signIn(view: View) {
         val email = loginEmail.text.toString()
         val password = loginPassword.text.toString().sha256()
         val user =
@@ -57,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
                         sessionManager.setSharedPrefString("USER_HASH", loginResponse.userRandomHash)
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        intent.putExtra("email", email)
                         startActivity(intent)
                     } else {
                         Toast.makeText(this@LoginActivity, loginResponse.error, Toast.LENGTH_SHORT).show()

@@ -1,8 +1,7 @@
 package ru.raider.date.activities
 
-
+import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -11,10 +10,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import ru.raider.date.R
 import ru.raider.date.fragments.ExploreFragment
 import ru.raider.date.fragments.MessagesFragment
 import ru.raider.date.fragments.TestFragment
+import ru.raider.date.models.SimpleResponse
+import ru.raider.date.network.RaiderApiClient
+import ru.raider.date.utils.SessionManager
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,14 +29,19 @@ class MainActivity : AppCompatActivity() {
     private val MESSAGES_FRAGMENT_TAG = "MessagesFragment"
     private val TEST_FRAGMENT_TAG = "TestFragment"
     private val EXPLORE_FRAGMENT_TAG = "ExploreFragment"
+    private lateinit var sessionManager: SessionManager
+    public lateinit var apiClient: RaiderApiClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-
+        apiClient = RaiderApiClient()
+        sessionManager = SessionManager(this)
         bottomNavigationMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if (savedInstanceState == null) {
-            bottomNavigationMenu.selectedItemId = R.id.navigation_explore;
+            //intent.getStringExtra("email")!!
+            //actionBar?.title = intent.getStringExtra("email")!!
+            bottomNavigationMenu.selectedItemId = R.id.navigation_explore
         }
 
     }
@@ -47,8 +57,30 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_refresh -> Toast.makeText(this, "Refresh selected", Toast.LENGTH_SHORT)
                     .show()
-            R.id.action_settings -> Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
-                    .show()
+            R.id.idLogOut -> {
+                Toast.makeText(this, "Delete selected", Toast.LENGTH_SHORT)
+                        .show()
+                apiClient.getApiService(this).signOut().enqueue(object : Callback<SimpleResponse> {
+                    override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
+                        Log.i("DEV", call.toString())
+                        Log.i("DEV", t.message.toString())
+
+                    }
+
+                    override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
+                        val simpleResponse = response.body()
+                        if (simpleResponse?.result == "OK") {
+                            sessionManager.deleteAuthStrings()
+                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                        } else {
+                            Toast.makeText(this@MainActivity, simpleResponse?.result, Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                    }
+                })
+            }
             else -> {
             }
         }
@@ -95,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.container, fragment, tag)
-                    .commit();
+                    .commit()
         }
     }
 }

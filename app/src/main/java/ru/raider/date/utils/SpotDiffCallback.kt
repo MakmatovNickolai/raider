@@ -1,11 +1,11 @@
 package ru.raider.date.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import ru.raider.date.models.Profile
+import ru.raider.date.models.User
 
 class SpotDiffCallback(
-        private val old: MutableList<Profile>,
-        private val new: MutableList<Profile>
+        private val old: MutableList<User>,
+        private val new: MutableList<User>
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {

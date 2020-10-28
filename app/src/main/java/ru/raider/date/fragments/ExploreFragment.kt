@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
@@ -16,25 +18,21 @@ import kotlinx.android.synthetic.main.explore_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.raider.date.models.Profile
+import ru.raider.date.models.User
 import ru.raider.date.R
-import ru.raider.date.adapters.ProfilesAdapter
+import ru.raider.date.activities.MainActivity
+import ru.raider.date.adapters.UsersAdapter
+import ru.raider.date.models.ExploreUserItem
 import ru.raider.date.network.RaiderApiClient
 import ru.raider.date.models.FetchUserResponse
 import ru.raider.date.models.SimpleResponse
 
 class ExploreFragment : Fragment(), CardStackListener {
-    private var profiless: MutableList<Profile>? = null
-    private lateinit var apiClient: RaiderApiClient
-    private val adapter = ProfilesAdapter()
-
+    private val adapter = GroupAdapter<GroupieViewHolder>()
     private lateinit var layoutManager: CardStackLayoutManager
-
-    private var isFirst = true
+    private var needLoadUsers = true
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val rootView:View = inflater.inflate(R.layout.explore_fragment, container, false)
-        return rootView
+        return inflater.inflate(R.layout.explore_fragment, container, false)
     }
 
 
@@ -54,11 +52,10 @@ class ExploreFragment : Fragment(), CardStackListener {
                     supportsChangeAnimations = false
                 }
             }
-            //stack_view.isNestedScrollingEnabled = false;
-            if (isFirst) {
-                apiClient = RaiderApiClient()
-                profiless = mutableListOf()
-                apiClient.getApiService(activity?.applicationContext!!).fetchUsers().enqueue(object : Callback<FetchUserResponse> {
+            if (needLoadUsers) {
+                Log.i("Dev", "First")
+                val mainActivity = activity as MainActivity
+                mainActivity.apiClient.getApiService(mainActivity).fetchUsers().enqueue(object : Callback<FetchUserResponse> {
                     override fun onFailure(call: Call<FetchUserResponse>, t: Throwable) {
                         Log.i("DEV", call.toString())
                         Log.i("DEV", t.message.toString())
@@ -68,24 +65,15 @@ class ExploreFragment : Fragment(), CardStackListener {
                     override fun onResponse(call: Call<FetchUserResponse>, response: Response<FetchUserResponse>) {
                         val fetchUserResponse = response.body()
                         fetchUserResponse?.let {
-                            val copy:MutableList<Profile> = mutableListOf()
-                            for (name in it.result) {
-                                copy.add(name)
+                            for (user in it.result) {
+                                adapter.add(ExploreUserItem(user))
                             }
-                            profiless = copy
-                            isFirst = false
-                            adapter.setsProfiles(it.result)
-                            adapter.notifyDataSetChanged()
+                            needLoadUsers = false
                         }
                     }
                 })
             } else {
-                val copy:MutableList<Profile> = mutableListOf()
-                for (name in profiless!!) {
-                   copy.add(name)
-                }
-                adapter.setsProfiles(copy)
-                adapter.notifyDataSetChanged()
+                Log.i("Dev", "not First")
             }
         } else {
             Log.i("DEV", "savedstate exists")
@@ -96,36 +84,23 @@ class ExploreFragment : Fragment(), CardStackListener {
         fun newInstance(): ExploreFragment = ExploreFragment()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    private fun like(id: String, direction: Int?) {
-        val profile = profiless?.removeAt(0)
-        Log.v("DEV", profile?.name.toString())
-        apiClient.getApiService(activity?.applicationContext!!).like(id, direction.toString()).enqueue(object : Callback<SimpleResponse> {
-            override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                Log.v("DEV", "err")
-            }
-
-            override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
-
-
-            }
-        })
-    }
-
     override fun onCardDragging(direction: Direction?, ratio: Float) {
 
     }
 
     override fun onCardSwiped(direction: Direction?) {
-        val profile = profiless?.get(0)
-        profile?.id?.let { like(it.toString(), direction?.ordinal) }
+        val user = adapter.getItem(0) as ExploreUserItem
+        adapter.remove(user)
+        val mainActivity = activity as MainActivity
+        mainActivity.apiClient.getApiService(mainActivity).like(user.user.id, direction?.ordinal.toString()).enqueue(object : Callback<SimpleResponse> {
+            override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
+                Log.v("DEV", "err")
+            }
+
+            override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
+                Log.i("Dev", "liked")
+            }
+        })
     }
 
     override fun onCardRewound() {

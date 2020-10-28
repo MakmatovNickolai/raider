@@ -17,58 +17,53 @@ import ru.raider.date.R
 import ru.raider.date.network.RaiderApiClient
 import ru.raider.date.models.FetchRoomsResponse
 import ru.raider.date.activities.ChatActivity
+import ru.raider.date.activities.MainActivity
 import ru.raider.date.models.ChatItem
 
 class MessagesFragment : Fragment() {
-    private lateinit var apiClient: RaiderApiClient
+    private var adapter = GroupAdapter<GroupieViewHolder>()
+    private var needLoadUsers = true
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.messages_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val adapter = GroupAdapter<GroupieViewHolder>()
-
-        apiClient = RaiderApiClient()
         recyclerView.adapter = adapter
         adapter.setOnItemClickListener { item, view ->
             if (item is ChatItem) {
                 val intent = Intent(view.context, ChatActivity::class.java)
                 intent.putExtra("username", item.roomRecord.user?.name)
-                intent.putExtra("to_user_id",  item.roomRecord.user?.id)
-                intent.putExtra("room_id",  item.roomRecord.room?.id)
+                intent.putExtra("toUserId",  item.roomRecord.user?.id)
+                intent.putExtra("roomId",  item.roomRecord.room?.id)
                 startActivity(intent)
             }
         }
 
-        apiClient.getApiService(activity?.applicationContext!!).fetchRooms().enqueue(object : Callback<FetchRoomsResponse> {
-            override fun onFailure(call: Call<FetchRoomsResponse>, t: Throwable) {
-                Log.i("DEV", call.toString())
-                Log.i("DEV", t.message.toString())
+        if (needLoadUsers) {
+            val mainActivity = activity as MainActivity
+            mainActivity.apiClient.getApiService(mainActivity).fetchRooms().enqueue(object : Callback<FetchRoomsResponse> {
+                override fun onFailure(call: Call<FetchRoomsResponse>, t: Throwable) {
+                    Log.i("DEV", call.toString())
+                    Log.i("DEV", t.message.toString())
 
-            }
+                }
 
-            override fun onResponse(call: Call<FetchRoomsResponse>, response: Response<FetchRoomsResponse>) {
-                val fetchRoomsResponse = response.body()
-                fetchRoomsResponse?.let {
-                    for (roomRecord in it.result) {
-                        adapter.add(ChatItem(roomRecord))
+                override fun onResponse(call: Call<FetchRoomsResponse>, response: Response<FetchRoomsResponse>) {
+                    val fetchRoomsResponse = response.body()
+                    fetchRoomsResponse?.let {
+                        for (roomRecord in it.result) {
+                            adapter.add(ChatItem(roomRecord))
+                        }
+                        needLoadUsers = false
                     }
                 }
-            }
-        })
+            })
+        }
     }
-
 
     companion object {
         fun newInstance(): MessagesFragment = MessagesFragment()
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
     }
 }
 

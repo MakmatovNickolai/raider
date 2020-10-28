@@ -4,16 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import ru.raider.date.models.Profile
 import ru.raider.date.R
-import ru.raider.date.databinding.CardViewProfileBinding
+import ru.raider.date.models.User
 
 
-class ProfilesAdapter : RecyclerView.Adapter<ProfilesAdapter.ProfileViewHolder>() {
+class UsersAdapter{
+/* : RecyclerView.Adapter<UsersAdapter.UserViewHolder>()
+    private var profiles: MutableList<User>? = null
 
-    private var profiles: MutableList<Profile>? = null
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProfileViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = UserViewHolder(
             DataBindingUtil.inflate(
                     LayoutInflater.from(parent.context),
                     R.layout.card_view_profile,
@@ -24,26 +23,26 @@ class ProfilesAdapter : RecyclerView.Adapter<ProfilesAdapter.ProfileViewHolder>(
 
     override fun getItemCount() = profiles?.size ?: 0
 
-    override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         profiles?.let {
-            holder.binding.profile = it[position]
+            holder.binding.user = it[position]
             holder.binding.executePendingBindings()
         }
     }
 
 
 
-    fun setsProfiles(profiles: MutableList<Profile>) {
+    fun setsProfiles(profiles: MutableList<User>) {
         this.profiles = profiles
 
     }
 
-    fun getProfiles(): MutableList<Profile> {
+    fun getProfiles(): MutableList<User> {
         return profiles!!
     }
 
 
-    inner class ProfileViewHolder(val binding: CardViewProfileBinding) :
+    inner class UserViewHolder(val binding: CardViewProfileBinding) :
         RecyclerView.ViewHolder(binding.root)
-
+*/
 }

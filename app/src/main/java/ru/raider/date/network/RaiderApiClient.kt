@@ -15,8 +15,8 @@ class RaiderApiClient {
         if (!::apiService.isInitialized) {
             val retrofit = Retrofit.Builder()
                     .client(okhttpClient(context))
-                    .baseUrl("http://localhost:5000/")
-                    // .baseUrl("https://raiderapi.herokuapp.com/")
+                    //.baseUrl("http://localhost:5000/")
+                     .baseUrl("https://raiderapi.herokuapp.com/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 

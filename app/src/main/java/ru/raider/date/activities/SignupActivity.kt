@@ -32,7 +32,7 @@ class SignupActivity : AppCompatActivity() {
     private val MIN_PASSWORD_LENGTH = 6
     private lateinit var sessionManager: SessionManager
     private lateinit var apiClient: RaiderApiClient
-    val pickImage = 1
+    private val pickImage = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
@@ -85,11 +85,9 @@ class SignupActivity : AppCompatActivity() {
 
     fun performSignUp (view: View) {
         if (validateInput()) {
-
             val photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"
             startActivityForResult(photoPickerIntent, pickImage)
-
 
         }
     }
@@ -116,7 +114,7 @@ class SignupActivity : AppCompatActivity() {
                     val age = et_age.text.toString().toInt()
                     var userId = UUID.randomUUID().toString()
 
-                  //  val user = User(id=userId, email=email, password = password, name=name, surname = surname, age=age, picture_url="https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/" + it.key ,sex="female")
+                    //val user = User(id=userId, email=email, password = password, name=name, surname = surname, age=age, picture_url="https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/" + it.key ,sex="female")
                     val user = User(id=userId, email=email, password = password, name=name, surname = surname, age=age, pictureUrl="https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/88571be52a03b7fef4301def71017ecb785d6480082b5ed9dd83fc5898f5ac19.jpg" ,sex="female")
 
                     apiClient = RaiderApiClient()
@@ -176,8 +174,8 @@ class SignupActivity : AppCompatActivity() {
                 contentResolver.query(imageUri, proj, null, null, null)
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                val column_index: Int = cursor.getColumnIndexOrThrow(proj[0])
-                result = cursor.getString(column_index)
+                val columnIndex: Int = cursor.getColumnIndexOrThrow(proj[0])
+                result = cursor.getString(columnIndex)
             }
             cursor.close()
         }

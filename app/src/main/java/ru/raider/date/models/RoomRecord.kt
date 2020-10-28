@@ -8,5 +8,5 @@ data class RoomRecord (
         @SerializedName("user")
         var user: User?,
         @SerializedName("last_message")
-        var lastMessage: Message?
+        var lastMessage: String?
 )

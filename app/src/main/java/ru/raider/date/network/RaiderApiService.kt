@@ -9,11 +9,14 @@ interface RaiderApiService {
     @GET("fetch_users")
     fun fetchUsers(): Call<FetchUserResponse>
 
-    @POST("signup")
+    @POST("sign_up")
     fun signUp(@Body user: User): Call<SignupResponse>
 
-    @POST("signin")
+    @POST("sign_in")
     fun signIn(@Body loginRequest: LoginRequest): Call<LoginResponse>
+
+    @GET("sign_out")
+    fun signOut(): Call<SimpleResponse>
 
     @GET("like")
     fun like(@Query("id") id: String, @Query("like") like: String): Call<SimpleResponse>

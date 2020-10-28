@@ -4,17 +4,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
-import kotlinx.android.synthetic.main.matches_recycler_view.view.*
 import kotlinx.android.synthetic.main.test_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.raider.date.models.Profile
+import ru.raider.date.models.User
 import ru.raider.date.R
+import ru.raider.date.activities.MainActivity
 import ru.raider.date.network.RaiderApiClient
 import ru.raider.date.models.FetchUserResponse
 import ru.raider.date.models.MatchItem
@@ -22,14 +20,10 @@ import ru.raider.date.models.SimpleResponse
 
 
 class TestFragment : Fragment() {
-    val adapter = GroupAdapter<GroupieViewHolder>()
-    private lateinit var apiClient: RaiderApiClient
-    private var profiless: MutableList<Profile>? = null
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? =
+    private val adapter = GroupAdapter<GroupieViewHolder>()
+    private var needLoadUsers = true
+    private var isBoth = true
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.test_fragment, container, false)
 
     companion object {
@@ -38,26 +32,42 @@ class TestFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        apiClient = RaiderApiClient()
         adapter.setOnItemClickListener { item, view ->
             if (item is MatchItem) {
-                apiClient.getApiService(activity?.applicationContext!!).createRoom(item.matchProfile.id).enqueue(object : Callback<SimpleResponse> {
-                    override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                        Log.i("DEV", call.toString())
-                        Log.i("DEV", t.message.toString())
+                val mainActivity = activity as MainActivity
+                if (item.isBoth) {
+                    mainActivity.apiClient.getApiService(mainActivity).createRoom(item.user.id).enqueue(object : Callback<SimpleResponse> {
+                        override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
+                            Log.i("DEV", call.toString())
+                            Log.i("DEV", t.message.toString())
+                        }
 
-                    }
+                        override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
+                            val simpleResponse = response.body()
+                            Log.i("DEV", simpleResponse.toString())
+                        }
+                    })
+                } else {
+                    mainActivity.apiClient.getApiService(mainActivity).like(item.user.id, "1").enqueue(object : Callback<SimpleResponse> {
+                        override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
+                            Log.i("DEV", call.toString())
+                            Log.i("DEV", t.message.toString())
 
-                    override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
-                        val fetchUserResponse = response.body()
-                        Log.i("DEV", fetchUserResponse.toString())
-                    }
-                })
+                        }
+
+                        override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
+                            val simpleResponse = response.body()
+                            Log.i("DEV", simpleResponse.toString())
+                        }
+                    })
+                }
+
             }
         }
         matchesRecyclerView.adapter = adapter
-        getMatches("both")
-
+        if (needLoadUsers) {
+            getMatches("both")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,34 +81,16 @@ class TestFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    fun getMatches(type:String) {
-        apiClient.getApiService(activity?.applicationContext!!).getMatches(type).enqueue(object : Callback<FetchUserResponse> {
-            override fun onFailure(call: Call<FetchUserResponse>, t: Throwable) {
-                Log.i("DEV", call.toString())
-                Log.i("DEV", t.message.toString())
-
-            }
-
-            override fun onResponse(call: Call<FetchUserResponse>, response: Response<FetchUserResponse>) {
-                val fetchUserResponse = response.body()
-                fetchUserResponse?.let {
-                    for (name in it.result) {
-                        adapter.add(MatchItem(name))
-                    }
-                    adapter.notifyDataSetChanged()
-                }
-            }
-        })
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.mutual_likes -> {
                 adapter.clear()
+                isBoth = true
                 getMatches("both")
             }
             R.id.liked_me -> {
                 adapter.clear()
+                isBoth = false
                 getMatches("one")
             }
             else -> {
@@ -106,5 +98,25 @@ class TestFragment : Fragment() {
             }
         }
         return true
+    }
+
+    private fun getMatches(type:String) {
+        val mainActivity = activity as MainActivity
+        mainActivity.apiClient.getApiService(mainActivity).getMatches(type).enqueue(object : Callback<FetchUserResponse> {
+            override fun onFailure(call: Call<FetchUserResponse>, t: Throwable) {
+                Log.i("DEV", call.toString())
+                Log.i("DEV", t.message.toString())
+            }
+
+            override fun onResponse(call: Call<FetchUserResponse>, response: Response<FetchUserResponse>) {
+                val fetchUserResponse = response.body()
+                fetchUserResponse?.let {
+                    for (user in it.result) {
+                        adapter.add(MatchItem(user, isBoth))
+                    }
+                }
+                needLoadUsers = false
+            }
+        })
     }
 }

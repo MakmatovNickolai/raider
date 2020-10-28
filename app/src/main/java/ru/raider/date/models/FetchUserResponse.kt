@@ -6,5 +6,5 @@ data class FetchUserResponse (
         @SerializedName("err")
         var err: String,
         @SerializedName("result")
-        val result: MutableList<Profile>
+        val result: MutableList<User>
 )

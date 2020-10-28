@@ -11,8 +11,8 @@
         app:showAsAction="never">
     </item>
     <item
-        android:id="@+id/action_network"
-        android:title="Network Setting"
+        android:id="@+id/idLogOut"
+        android:title="Log out"
         app:showAsAction="never">
     </item>
 </menu>
