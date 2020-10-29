@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFFFFF"
+    android:background="@color/mainAppColor"
     tools:context=".activities.SignupActivity">
 
     <TextView
@@ -21,179 +21,123 @@
         android:layout_marginTop="24dp"
         />
 
-    <ScrollView
+
+    <EditText
+        android:id="@+id/idUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_heading"
-        >
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            >
-
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_first_name"
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="20dp"
-                android:textColorHint="#808080"
-                app:layout_constraintTop_toTopOf="parent"
-                >
-
-                <EditText
-                    android:id="@+id/et_first_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Имя"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#808080"
-                    android:textSize="15sp"
-                    android:autofillHints=""
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
+        android:autofillHints=""
+        android:gravity="center"
+        android:hint="Имя"
+        android:inputType="text"
+        android:padding="10dp"
+        android:textColor="#000000"
+        android:textColorHint="#808080"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_heading"
+        tools:layout_editor_absoluteX="16dp" />
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_last_name"
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp"
-                android:textColorHint="#808080"
-                app:layout_constraintTop_toBottomOf="@+id/layout_first_name"
-                >
+    <EditText
+        android:id="@+id/idUserCity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:gravity="center"
+        android:hint="Город"
+        android:inputType="text"
+        android:padding="10dp"
+        android:textColor="#000000"
+        android:textColorHint="#808080"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/idUserName"
+        tools:layout_editor_absoluteX="25dp" />
 
-                <EditText
-                    android:id="@+id/et_last_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Фамилия"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#808080"
-                    android:textSize="15sp"
-                    android:autofillHints=""
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Пол:"
+        android:textColor="#000000"
+        android:textColorHint="#808080"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/idUserGender"
+        app:layout_constraintEnd_toStartOf="@+id/idUserGender"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idUserCity" />
 
+    <Spinner
+        android:id="@+id/idUserGender"
+        android:layout_width="253dp"
+        android:layout_height="31dp"
+        android:entries="@array/gender"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idUserCity" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_email"
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp"
-                android:textColorHint="#808080"
-                app:layout_constraintTop_toBottomOf="@+id/layout_last_name"
-                >
+    <EditText
+        android:id="@+id/idUserAge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:gravity="center"
+        android:hint="Возраст"
+        android:inputType="number"
+        android:padding="10dp"
+        android:textColor="#000000"
+        android:textColorHint="#808080"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/idUserGender"
+        tools:layout_editor_absoluteX="-16dp" />
 
-                <EditText
-                    android:id="@+id/et_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Почтыящик"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#808080"
-                    android:textSize="15sp"
-                    android:inputType="textEmailAddress"
-                    android:autofillHints="" />
+    <EditText
+        android:id="@+id/idUserEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autofillHints=""
+        android:ems="100"
+        android:gravity="center"
+        android:hint="Почта"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
 
-            </com.google.android.material.textfield.TextInputLayout>
+        android:textColorHint="#808080"
+        app:layout_constraintTop_toBottomOf="@+id/idUserAge"
+        tools:layout_editor_absoluteX="-16dp" />
 
+    <EditText
+        android:id="@+id/idUserPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:gravity="center"
+        android:hint="Пароль"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textColor="#000000"
+        android:textColorHint="#808080"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/idUserEmail"
+        tools:layout_editor_absoluteX="-74dp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_age"
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp"
-                android:textColorHint="#808080"
-                app:layout_constraintTop_toBottomOf="@+id/layout_email"
-                >
-
-
-                <EditText
-                    android:id="@+id/et_age"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Возраст"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#808080"
-                    android:ems="100"
-                    android:inputType="number"
-                    android:autofillHints="" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_repeat_password"
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.7"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="10dp"
-                android:textColorHint="#808080"
-                app:layout_constraintTop_toBottomOf="@+id/layout_age"
-                >
-
-                <EditText
-                    android:id="@+id/et_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Пароль"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#808080"
-                    android:textSize="15sp"
-                    android:inputType="textPassword"
-                    android:autofillHints="" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <Button
-                android:id="@+id/bt_register"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                app:layout_constraintTop_toBottomOf="@+id/layout_repeat_password"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:text="Зарегаться"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:background="@color/colorPrimary"
-                android:textAllCaps="false"
-                android:layout_marginTop="30dp"
-                app:layout_constraintWidth_percent="0.7"
-                style="?android:attr/borderlessButtonStyle"
-                android:onClick="performSignUp"
-                />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+    <Button
+        android:id="@+id/idRegisterButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorPrimary"
+        android:onClick="performSignUp"
+        android:text="Зарегаться"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.406"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

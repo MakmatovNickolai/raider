@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -17,8 +18,9 @@ import ru.raider.date.R
 import ru.raider.date.fragments.ExploreFragment
 import ru.raider.date.fragments.MessagesFragment
 import ru.raider.date.fragments.TestFragment
-import ru.raider.date.models.SimpleResponse
+import ru.raider.date.network_models.SimpleResponse
 import ru.raider.date.network.RaiderApiClient
+import ru.raider.date.network_models.User
 import ru.raider.date.utils.SessionManager
 
 
@@ -26,11 +28,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var exploreFragment: ExploreFragment
     private lateinit var testFragment: TestFragment
     private lateinit var messagesFragment: MessagesFragment
-    private val MESSAGES_FRAGMENT_TAG = "MessagesFragment"
-    private val TEST_FRAGMENT_TAG = "TestFragment"
-    private val EXPLORE_FRAGMENT_TAG = "ExploreFragment"
     private lateinit var sessionManager: SessionManager
-    public lateinit var apiClient: RaiderApiClient
+    lateinit var apiClient: RaiderApiClient
+    lateinit var myProfile: User
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,11 +39,12 @@ class MainActivity : AppCompatActivity() {
         sessionManager = SessionManager(this)
         bottomNavigationMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if (savedInstanceState == null) {
-            //intent.getStringExtra("email")!!
-            //actionBar?.title = intent.getStringExtra("email")!!
+            val user = User("1", "xer", "xer2", 23,"https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/f4b9d68ae31fc834dc25811867fd2049ffed5810a9a74e8390710a39ed6068b0.jpg",
+                "female","","")
+            myProfile = user
+            //myProfile = intent.getParcelableExtra("user")!!
             bottomNavigationMenu.selectedItemId = R.id.navigation_explore
         }
-
     }
 
 
@@ -55,31 +56,45 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_refresh -> Toast.makeText(this, "Refresh selected", Toast.LENGTH_SHORT)
-                    .show()
+            R.id.idActionProfile -> {
+                val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("user", myProfile)
+                startActivity(intent)
+            }
             R.id.idLogOut -> {
-                Toast.makeText(this, "Delete selected", Toast.LENGTH_SHORT)
-                        .show()
-                apiClient.getApiService(this).signOut().enqueue(object : Callback<SimpleResponse> {
-                    override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                        Log.i("DEV", call.toString())
-                        Log.i("DEV", t.message.toString())
+                val builder = AlertDialog.Builder(this@MainActivity)
+                builder.setMessage("Уверен нет, что хочешь выйти?")
+                    .setCancelable(false)
+                    .setNegativeButton("Нулячий пока") { dialog, _ ->
+                        // Dismiss the dialog
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton("Да, прикинь") { _, _ ->
+                        // Delete selected note from database
+                        apiClient.getApiService(this).signOut().enqueue(object : Callback<SimpleResponse> {
+                            override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
+                                Log.i("DEV", call.toString())
+                                Log.i("DEV", t.message.toString())
 
+                            }
+
+                            override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
+                                val simpleResponse = response.body()
+                                if (simpleResponse?.result == "OK") {
+                                    sessionManager.deleteAuthStrings()
+                                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    startActivity(intent)
+                                } else {
+                                    Toast.makeText(this@MainActivity, simpleResponse?.result, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                        })
                     }
 
-                    override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
-                        val simpleResponse = response.body()
-                        if (simpleResponse?.result == "OK") {
-                            sessionManager.deleteAuthStrings()
-                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                        } else {
-                            Toast.makeText(this@MainActivity, simpleResponse?.result, Toast.LENGTH_SHORT)
-                                    .show()
-                        }
-                    }
-                })
+                val alert = builder.create()
+                alert.show()
             }
             else -> {
             }
@@ -94,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i("DEV", "isNotInitialized")
                     exploreFragment = ExploreFragment.newInstance()
                 }
-                openFragment(exploreFragment, EXPLORE_FRAGMENT_TAG)
+                openFragment(exploreFragment, Companion.EXPLORE_FRAGMENT_TAG)
                 return@OnNavigationItemSelectedListener true
 
             }
@@ -104,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                     messagesFragment = MessagesFragment.newInstance()
                 }
 
-                openFragment(messagesFragment, MESSAGES_FRAGMENT_TAG)
+                openFragment(messagesFragment, Companion.MESSAGES_FRAGMENT_TAG)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_test -> {
@@ -112,7 +127,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i("DEV", "isNotInitialized")
                     testFragment = TestFragment.newInstance()
                 }
-                openFragment(testFragment, TEST_FRAGMENT_TAG)
+                openFragment(testFragment, Companion.TEST_FRAGMENT_TAG)
 
                 return@OnNavigationItemSelectedListener true
             }
@@ -129,5 +144,11 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.container, fragment, tag)
                     .commit()
         }
+    }
+
+    companion object {
+        private const val MESSAGES_FRAGMENT_TAG = "MessagesFragment"
+        private const val TEST_FRAGMENT_TAG = "TestFragment"
+        private const val EXPLORE_FRAGMENT_TAG = "ExploreFragment"
     }
 }

@@ -12,6 +12,7 @@ class RaiderApiClient {
     fun getApiService(context: Context): RaiderApiService {
 
         // Initialize ApiService if not initialized yet
+        // TODO: 30.10.2020 Добавить обработку ошибок, если нет интернета 
         if (!::apiService.isInitialized) {
             val retrofit = Retrofit.Builder()
                     .client(okhttpClient(context))

@@ -18,14 +18,11 @@ import kotlinx.android.synthetic.main.explore_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.raider.date.models.User
 import ru.raider.date.R
 import ru.raider.date.activities.MainActivity
-import ru.raider.date.adapters.UsersAdapter
-import ru.raider.date.models.ExploreUserItem
-import ru.raider.date.network.RaiderApiClient
-import ru.raider.date.models.FetchUserResponse
-import ru.raider.date.models.SimpleResponse
+import ru.raider.date.adapter_models.ExploreUserItem
+import ru.raider.date.network_models.FetchUserResponse
+import ru.raider.date.network_models.SimpleResponse
 
 class ExploreFragment : Fragment(), CardStackListener {
     private val adapter = GroupAdapter<GroupieViewHolder>()
@@ -39,6 +36,8 @@ class ExploreFragment : Fragment(), CardStackListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (savedInstanceState == null) {
+            // TODO: 30.10.2020  Добавить скроллинг инфо вниз при нажатии на карточку
+            // TODO: 30.10.2020 Добавить город и местоположение 
             layoutManager = CardStackLayoutManager(activity, this).apply {
                 setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
                 setOverlayInterpolator(LinearInterpolator())
@@ -92,7 +91,7 @@ class ExploreFragment : Fragment(), CardStackListener {
         val user = adapter.getItem(0) as ExploreUserItem
         adapter.remove(user)
         val mainActivity = activity as MainActivity
-        mainActivity.apiClient.getApiService(mainActivity).like(user.user.id, direction?.ordinal.toString()).enqueue(object : Callback<SimpleResponse> {
+        mainActivity.apiClient.getApiService(mainActivity).like(user.user.id!!, direction?.ordinal.toString()).enqueue(object : Callback<SimpleResponse> {
             override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
                 Log.v("DEV", "err")
             }

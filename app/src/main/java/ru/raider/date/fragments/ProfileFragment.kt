@@ -10,13 +10,11 @@ import kotlinx.android.synthetic.main.test_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.raider.date.models.User
 import ru.raider.date.R
 import ru.raider.date.activities.MainActivity
-import ru.raider.date.network.RaiderApiClient
-import ru.raider.date.models.FetchUserResponse
-import ru.raider.date.models.MatchItem
-import ru.raider.date.models.SimpleResponse
+import ru.raider.date.network_models.FetchUserResponse
+import ru.raider.date.adapter_models.MatchItem
+import ru.raider.date.network_models.SimpleResponse
 
 
 class TestFragment : Fragment() {
@@ -36,7 +34,7 @@ class TestFragment : Fragment() {
             if (item is MatchItem) {
                 val mainActivity = activity as MainActivity
                 if (item.isBoth) {
-                    mainActivity.apiClient.getApiService(mainActivity).createRoom(item.user.id).enqueue(object : Callback<SimpleResponse> {
+                    mainActivity.apiClient.getApiService(mainActivity).createRoom(item.user.id!!).enqueue(object : Callback<SimpleResponse> {
                         override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
                             Log.i("DEV", call.toString())
                             Log.i("DEV", t.message.toString())
@@ -48,7 +46,7 @@ class TestFragment : Fragment() {
                         }
                     })
                 } else {
-                    mainActivity.apiClient.getApiService(mainActivity).like(item.user.id, "1").enqueue(object : Callback<SimpleResponse> {
+                    mainActivity.apiClient.getApiService(mainActivity).like(item.user.id!!, "1").enqueue(object : Callback<SimpleResponse> {
                         override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
                             Log.i("DEV", call.toString())
                             Log.i("DEV", t.message.toString())

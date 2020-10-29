@@ -1,10 +1,11 @@
-package ru.raider.date.models
+package ru.raider.date.adapter_models
 
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import kotlinx.android.synthetic.main.recyclerview_item_row.view.*
 import ru.raider.date.R
+import ru.raider.date.network_models.RoomRecord
 
 class ChatItem(val roomRecord: RoomRecord): Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {

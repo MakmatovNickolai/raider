@@ -11,8 +11,8 @@ import ru.raider.date.network.RaiderApiClient
 import retrofit2.Callback
 import retrofit2.Response
 import ru.raider.date.R
-import ru.raider.date.models.LoginRequest
-import ru.raider.date.models.LoginResponse
+import ru.raider.date.network_models.LoginRequest
+import ru.raider.date.network_models.LoginResponse
 import ru.raider.date.utils.SessionManager
 import sha256
 
@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
 
         apiClient.getApiService(this).signIn(user).enqueue(object : Callback<LoginResponse> {
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                Toast.makeText(this@LoginActivity,"KAL ошибка в запросе",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity,  t.localizedMessage + " " + t.message ,Toast.LENGTH_SHORT).show()
             }
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 val loginResponse = response.body()
@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
                         sessionManager.setSharedPrefString("USER_HASH", loginResponse.userRandomHash)
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        intent.putExtra("email", email)
+                        intent.putExtra("user", loginResponse.user)
                         startActivity(intent)
                     } else {
                         Toast.makeText(this@LoginActivity, loginResponse.error, Toast.LENGTH_SHORT).show()

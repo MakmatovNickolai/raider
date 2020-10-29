@@ -2,7 +2,7 @@ package ru.raider.date.network
 
 import retrofit2.Call
 import retrofit2.http.*
-import ru.raider.date.models.*
+import ru.raider.date.network_models.*
 
 interface RaiderApiService {
 

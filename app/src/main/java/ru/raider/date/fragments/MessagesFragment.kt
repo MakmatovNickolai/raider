@@ -14,11 +14,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.raider.date.R
-import ru.raider.date.network.RaiderApiClient
-import ru.raider.date.models.FetchRoomsResponse
+import ru.raider.date.network_models.FetchRoomsResponse
 import ru.raider.date.activities.ChatActivity
 import ru.raider.date.activities.MainActivity
-import ru.raider.date.models.ChatItem
+import ru.raider.date.adapter_models.ChatItem
 
 class MessagesFragment : Fragment() {
     private var adapter = GroupAdapter<GroupieViewHolder>()
@@ -42,6 +41,7 @@ class MessagesFragment : Fragment() {
 
         if (needLoadUsers) {
             val mainActivity = activity as MainActivity
+            // TODO: 30.10.2020 Добавить анимацию загрузки во всех местах где есть загрузка 
             mainActivity.apiClient.getApiService(mainActivity).fetchRooms().enqueue(object : Callback<FetchRoomsResponse> {
                 override fun onFailure(call: Call<FetchRoomsResponse>, t: Throwable) {
                     Log.i("DEV", call.toString())

@@ -1,9 +1,10 @@
-package ru.raider.date.models
+package ru.raider.date.adapter_models
 
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import kotlinx.android.synthetic.main.message_from_item.view.*
 import ru.raider.date.R
+import ru.raider.date.network_models.Message
 
 class MessageFromItem(val message: Message): Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {

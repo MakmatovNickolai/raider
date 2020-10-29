@@ -1,8 +1,8 @@
-package ru.raider.date.models
+package ru.raider.date.network_models
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginResponse (
+data class SignupResponse (
         @SerializedName("error")
         var error: String,
 

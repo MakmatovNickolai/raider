@@ -29,9 +29,10 @@ class AmplifyClass : Application() {
             Log.i("MyAmplifyApp", "Initialized Amplify")
 
 
+
             /*Amplify.Auth.signIn(
                     "raiderr",
-                    "LYtq2sT6@",
+                    "", // пароль
                     { result -> Log.i("MyAmplifyApp", if (result.isSignInComplete) "Sign in succeeded" else "Sign in not complete") },
                     { error -> Log.e("MyAmplifyApp", error.toString()) }
             )*/

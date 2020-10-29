@@ -12,10 +12,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import ru.raider.date.R
 import ru.raider.date.network.RaiderApiClient
-import ru.raider.date.models.Message
-import ru.raider.date.models.MessageFromItem
-import ru.raider.date.models.MessageToItem
-import ru.raider.date.models.SimpleResponse
+import ru.raider.date.network_models.Message
+import ru.raider.date.adapter_models.MessageFromItem
+import ru.raider.date.adapter_models.MessageToItem
+import ru.raider.date.network_models.SimpleResponse
 import java.util.*
 
 class ChatActivity : AppCompatActivity() {
@@ -27,6 +27,7 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        // TODO: 30.10.2020 добавить подписку на входящие сообщения в реальном времени 
         supportActionBar?.title = intent.getStringExtra("username")
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toUserId = intent.getStringExtra("toUserId")!!

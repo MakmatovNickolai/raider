@@ -1,98 +1,138 @@
 package ru.raider.date.activities
-import android.app.Activity
-import android.content.Intent
-import android.database.Cursor
-import android.graphics.BitmapFactory
-import android.net.Uri
+
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
-import android.view.View
+import android.view.Menu
+import android.view.MenuItem
+import android.view.ViewTreeObserver.OnScrollChangedListener
 import androidx.appcompat.app.AppCompatActivity
-import com.amplifyframework.core.Amplify
-import com.amplifyframework.storage.StorageAccessLevel
-import com.amplifyframework.storage.options.StorageUploadFileOptions
+import com.squareup.picasso.Picasso
+import convertImageUrl
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.raider.date.R
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.InputStream
+import ru.raider.date.fragments.ProfileEditPhotosFragment
+import ru.raider.date.fragments.ProfileSettingsFragment
+import ru.raider.date.fragments.ProfileViewPhotosFragment
+import ru.raider.date.network_models.User
 
 
 class ProfileActivity : AppCompatActivity() {
-    val pickImage = 1
+
+    private lateinit var myProfile: User
+    val images = listOf<String>(
+        "https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/f4b9d68ae31fc834dc25811867fd2049ffed5810a9a74e8390710a39ed6068b0.jpg",
+        "https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/88571be52a03b7fef4301def71017ecb785d6480082b5ed9dd83fc5898f5ac19.jpg",
+        "https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/f636a5e41467e9101b9cbe1ba67f3edd51a697bd6f4ed9d503853986cb8ca5b1.jpg",
+        "https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/f4b9d68ae31fc834dc25811867fd2049ffed5810a9a74e8390710a39ed6068b0.jpg"
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-    }
+        if (savedInstanceState == null) {
+            myProfile = intent.getParcelableExtra("user")!!
+            val newUrl = convertImageUrl(myProfile.pictureUrl)
+            Picasso.get().load(newUrl).into(idProfilePhoto)
+            idProfileName.text = myProfile.name
+            idProfileAge.text = myProfile.age.toString()
+            idProfileSex.text = myProfile.sex
+            idProfilePhoto.setOnClickListener {
+                // your code to perform when the user clicks on the ImageView
+                //val profilePhotosFragment = ProfilePhotosFragment.newInstance(myProfile.photoUrls)
 
-    fun changeProfilePicture(view: View) {
 
-        val photoPickerIntent = Intent(Intent.ACTION_PICK)
-        photoPickerIntent.type = "image/*"
-        startActivityForResult(photoPickerIntent, pickImage)
-
-    }
-
-   override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent)
-        when (requestCode) {
-            pickImage -> if (resultCode == Activity.RESULT_OK) {
-                try {
-                    val imageUri: Uri? = imageReturnedIntent?.data
-                    val path = getPath(imageUri!!)
-                    val selectedImageFile = File(path)
-
-                    val imageStream: InputStream? = imageUri?.let {
-                        contentResolver.openInputStream(
-                            it
+                val profilePhotosFragment = ProfileViewPhotosFragment.newInstance(images)
+                if (!profilePhotosFragment.isInLayout) {
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(
+                            R.id.idMainFrame, profilePhotosFragment,
+                            PROFILE_VIEW_PHOTOS_FRAGMENT_TAG
                         )
-                    }
-                    val selectedImage = BitmapFactory.decodeStream(imageStream)
-
-                    profile_pic?.setImageBitmap(selectedImage)
-
-                    val options = StorageUploadFileOptions.builder()
-                        .accessLevel(StorageAccessLevel.PROTECTED)
-                        .build()
-
-                    val exampleFile = File(applicationContext.filesDir, "ExampleKey")
-
-                    exampleFile.writeText("Example file contents")
-                    Amplify.Storage.uploadFile(
-                        "ExampleKey.jpg",
-                        selectedImageFile,
-                        { result ->
-                            Log.i(
-                                "MyAmplifyApp",
-                                "Successfully uploaded: " + result.key
-                            )
-                        },
-                        { error -> Log.e("MyAmplifyApp", "Upload failed", error) }
-                    )
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
+                        .addToBackStack(null)
+                        .commit()
                 }
             }
-        }
-   }
 
-    private fun getPath(imageUri:Uri): String {
-        var result: String? = null
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor: Cursor? =
-                contentResolver.query(imageUri, proj, null, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val column_index: Int = cursor.getColumnIndexOrThrow(proj[0])
-                result = cursor.getString(column_index)
+            // доделать тему https://gist.github.com/aqua30/e8623abaff190ee86727ee5ae8dac82a
+            // TODO: 29.10.2020
+            tv_heading.setAlpha(0f);
+            /* set the scroll change listener on scrollview */
+            idProfileInfoScrollView.getViewTreeObserver()
+                .addOnScrollChangedListener(
+                    OnScrollChangedListener { /* get the maximum height which we have scroll before performing any action */
+                        val maxDistance: Int = idProfilePhoto.getHeight()
+                        /* how much we have scrolled */
+                        val movement: Int = idProfileInfoScrollView.getScrollY()
+                        /*finally calculate the alpha factor and set on the view */
+                        val alphaFactor: Float =
+                            movement * 1.0f / (maxDistance - tv_heading.getHeight())
+                        if (movement >= 0 && movement <= maxDistance) {
+                            /*for image parallax with scroll */
+                            idProfilePhoto.setTranslationY((-movement / 2).toFloat())
+                            /* set visibility */
+                            tv_heading.setAlpha(alphaFactor)
+                        }
+                    })
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.profile_settings_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.idChangeProfileNameMenuItem -> {
+                val profileSettingsFragment = ProfileSettingsFragment.newInstance()
+                if (!profileSettingsFragment.isInLayout) {
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(
+                            R.id.idMainFrame, profileSettingsFragment,
+                            PROFILE_SETTINGS_FRAGMENT_TAG
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
-            cursor.close()
+            R.id.idChangeProfilePhotosMenuItem -> {
+                val profileEditPhotosFragment = ProfileEditPhotosFragment.newInstance(images)
+                if (!profileEditPhotosFragment.isInLayout) {
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(
+                            R.id.idMainFrame, profileEditPhotosFragment,
+                            PROFILE_EDIT_PHOTOS_FRAGMENT_TAG
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+            else -> {
+            }
         }
-        if (result == null) {
-            result = "Not found"
+        return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        private const val PROFILE_VIEW_PHOTOS_FRAGMENT_TAG = "ProfileViewPhotosFragment"
+        private const val PROFILE_SETTINGS_FRAGMENT_TAG = "ProfileSettingsFragment"
+        private const val PROFILE_EDIT_PHOTOS_FRAGMENT_TAG = "ProfileEditPhotosFragment"
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            Log.i("Dev", "popping backstack")
+            if (supportActionBar?.isShowing == false) {
+                supportActionBar?.show()
+            }
+            supportFragmentManager.popBackStack()
+        } else {
+            Log.i("Dev", "nothing on backstack, calling super")
+            super.onBackPressed()
         }
-        return result
     }
 }
 

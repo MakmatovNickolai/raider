@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">RAIDER</string>
+    <string-array name="gender">
+        <item>Мужской</item>
+        <item>Женский</item>
+    </string-array>
     <string name="title_activity_messages">ScrollingActivity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
@@ -91,4 +95,6 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
