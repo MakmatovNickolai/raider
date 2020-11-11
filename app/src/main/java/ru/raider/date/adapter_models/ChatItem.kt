@@ -10,8 +10,9 @@ import ru.raider.date.network_models.RoomRecord
 class ChatItem(val roomRecord: RoomRecord): Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.itemUsername.text = roomRecord.user?.name
-        viewHolder.itemView.itemPreviewMessage.text = roomRecord.lastMessage
-        Picasso.get().load(roomRecord.user?.pictureUrl).into(viewHolder.itemView.itemAvatar)
+        val preview = if (roomRecord.lastMessage.isNullOrEmpty()) " \uD83D\uDE0A Новая беседа, напиши что-нибудь!" else roomRecord.lastMessage
+        viewHolder.itemView.itemPreviewMessage.text = preview
+        Picasso.get().load(roomRecord.user?.main_picture_url).into(viewHolder.itemView.itemAvatar)
     }
 
     override fun getLayout(): Int {

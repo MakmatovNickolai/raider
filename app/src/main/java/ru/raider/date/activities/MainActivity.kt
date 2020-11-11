@@ -1,52 +1,113 @@
 package ru.raider.date.activities
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.ActionBar
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_action_bar.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.raider.date.App
 import ru.raider.date.R
 import ru.raider.date.fragments.ExploreFragment
+import ru.raider.date.fragments.MatchesFragment
 import ru.raider.date.fragments.MessagesFragment
-import ru.raider.date.fragments.TestFragment
-import ru.raider.date.network_models.SimpleResponse
 import ru.raider.date.network.RaiderApiClient
+import ru.raider.date.network_models.SimpleResponse
 import ru.raider.date.network_models.User
 import ru.raider.date.utils.SessionManager
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var exploreFragment: ExploreFragment
-    private lateinit var testFragment: TestFragment
+    private lateinit var matchesFragment: MatchesFragment
     private lateinit var messagesFragment: MessagesFragment
-    private lateinit var sessionManager: SessionManager
+
     lateinit var apiClient: RaiderApiClient
-    lateinit var myProfile: User
+    private lateinit var locationManager:LocationManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+        }
+        //locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener)
+
+
+        // TODO: 11.11.2020 местоположение
+        // TODO: 11.11.2020 всю загрузку разделить на страницы, по 10 профилей, по 10 бесед, 10 сообщений, и подгружать дальше при необходимости
+        // TODO: 11.11.2020 сделать серверную часть 
+        
         setContentView(R.layout.activity_main)
         apiClient = RaiderApiClient()
-        sessionManager = SessionManager(this)
+        isToolbarTitle.text = "RAIDER"
+        setSupportActionBar(includeToolbar as Toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         bottomNavigationMenu.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if (savedInstanceState == null) {
-            val user = User("1", "xer", "xer2", 23,"https://raiders3225357-dev.s3.eu-central-1.amazonaws.com/public/f4b9d68ae31fc834dc25811867fd2049ffed5810a9a74e8390710a39ed6068b0.jpg",
-                "female","","")
-            myProfile = user
-            //myProfile = intent.getParcelableExtra("user")!!
+
             bottomNavigationMenu.selectedItemId = R.id.navigation_explore
         }
     }
 
+    private val locationListener: LocationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            Log.i("DEV", location.latitude.toString())
+            Log.i("DEV", location.longitude.toString())
+            apiClient.getApiService(this@MainActivity).updateLocation(location.longitude, location.latitude).enqueue(object : Callback<SimpleResponse> {
+                override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
+                    Log.i("DEV", call.toString())
+                    Log.i("DEV", t.message.toString())
+
+                }
+
+                override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
+                    val simpleResponse = response.body()
+
+                    if (simpleResponse?.result == "OK") {
+                        Toast.makeText(this@MainActivity, "OK", Toast.LENGTH_SHORT)
+                                .show()
+                    } else {
+                        Toast.makeText(this@MainActivity, simpleResponse?.result, Toast.LENGTH_SHORT)
+                                .show()
+                    }
+                }
+            })
+            locationManager.removeUpdates(this)
+        }
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+        override fun onProviderEnabled(provider: String) {}
+        override fun onProviderDisabled(provider: String) {}
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
@@ -58,43 +119,8 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.idActionProfile -> {
                 val intent = Intent(this, ProfileActivity::class.java)
-                intent.putExtra("user", myProfile)
+                intent.putExtra("activityType", "usual")
                 startActivity(intent)
-            }
-            R.id.idLogOut -> {
-                val builder = AlertDialog.Builder(this@MainActivity)
-                builder.setMessage("Уверен нет, что хочешь выйти?")
-                    .setCancelable(false)
-                    .setNegativeButton("Нулячий пока") { dialog, _ ->
-                        // Dismiss the dialog
-                        dialog.dismiss()
-                    }
-                    .setPositiveButton("Да, прикинь") { _, _ ->
-                        // Delete selected note from database
-                        apiClient.getApiService(this).signOut().enqueue(object : Callback<SimpleResponse> {
-                            override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
-                                Log.i("DEV", call.toString())
-                                Log.i("DEV", t.message.toString())
-
-                            }
-
-                            override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
-                                val simpleResponse = response.body()
-                                if (simpleResponse?.result == "OK") {
-                                    sessionManager.deleteAuthStrings()
-                                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                                    startActivity(intent)
-                                } else {
-                                    Toast.makeText(this@MainActivity, simpleResponse?.result, Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-                            }
-                        })
-                    }
-
-                val alert = builder.create()
-                alert.show()
             }
             else -> {
             }
@@ -123,11 +149,11 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_test -> {
-                if (!this::testFragment.isInitialized) {
+                if (!this::matchesFragment.isInitialized) {
                     Log.i("DEV", "isNotInitialized")
-                    testFragment = TestFragment.newInstance()
+                    matchesFragment = MatchesFragment.newInstance()
                 }
-                openFragment(testFragment, Companion.TEST_FRAGMENT_TAG)
+                openFragment(matchesFragment, Companion.TEST_FRAGMENT_TAG)
 
                 return@OnNavigationItemSelectedListener true
             }
@@ -135,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         false
     }
 
-    private fun openFragment(fragment: Fragment, tag:String) {
+    private fun openFragment(fragment: Fragment, tag: String) {
         // ... fragment lookup or instantation from above...
         // Always add a tag to a fragment being inserted into container
         if (!fragment.isInLayout) {
@@ -143,6 +169,23 @@ class MainActivity : AppCompatActivity() {
                     .beginTransaction()
                     .replace(R.id.container, fragment, tag)
                     .commit()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            Log.i("Dev", "popping backstack")
+            if (supportActionBar?.isShowing == false) {
+                supportActionBar?.show()
+            }
+            if (bottomNavigationMenu.visibility != View.VISIBLE) {
+                bottomNavigationMenu.visibility = View.VISIBLE
+            }
+
+            supportFragmentManager.popBackStack()
+        } else {
+            Log.i("Dev", "nothing on backstack, calling super")
+            super.onBackPressed()
         }
     }
 

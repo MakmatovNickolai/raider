@@ -3,18 +3,25 @@ package ru.raider.date.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.main_action_bar.*
 import retrofit2.Call
 import ru.raider.date.network.RaiderApiClient
 import retrofit2.Callback
 import retrofit2.Response
+import ru.raider.date.App
 import ru.raider.date.R
+import ru.raider.date.network_models.CheckAuthReponse
 import ru.raider.date.network_models.LoginRequest
 import ru.raider.date.network_models.LoginResponse
+import ru.raider.date.network_models.SimpleResponse
 import ru.raider.date.utils.SessionManager
 import sha256
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
@@ -22,15 +29,16 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+        setContentView(R.layout.activity_login)
+        isToolbarTitle.text = "RAIDER"
+        setSupportActionBar(includeToolbarLogin as Toolbar)
         sessionManager = SessionManager(this)
-        if (sessionManager.getSharedPrefString("USER_TOKEN").isNullOrEmpty()) {
-            setContentView(R.layout.activity_login)
-        } else {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-        }
+        apiClient = RaiderApiClient()
+
+
     }
+
 
     fun register(view: View) {
         val intent = Intent(this, SignupActivity::class.java)
@@ -40,10 +48,7 @@ class LoginActivity : AppCompatActivity() {
     fun signIn(view: View) {
         val email = loginEmail.text.toString()
         val password = loginPassword.text.toString().sha256()
-        val user =
-            LoginRequest(email = email, password = password)
-
-        apiClient = RaiderApiClient()
+        val user = LoginRequest(email = email, password = password)
 
         apiClient.getApiService(this).signIn(user).enqueue(object : Callback<LoginResponse> {
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
@@ -57,7 +62,10 @@ class LoginActivity : AppCompatActivity() {
                         sessionManager.setSharedPrefString("USER_HASH", loginResponse.userRandomHash)
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        intent.putExtra("user", loginResponse.user)
+
+                        // добавляем пользователя глобально, чтобы получать к нему доступ везде в приложении
+                        App.user = loginResponse.user
+                        App.user.pictureUrls?.sortByDescending{it == App.user.main_picture_url}
                         startActivity(intent)
                     } else {
                         Toast.makeText(this@LoginActivity, loginResponse.error, Toast.LENGTH_SHORT).show()

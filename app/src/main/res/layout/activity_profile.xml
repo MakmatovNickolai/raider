@@ -4,75 +4,159 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/profile_back"
-    android:id="@+id/idMainFrame"
     tools:context=".activities.ProfileActivity">
 
-
-    <ImageView
-        android:id="@+id/idProfilePhoto"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintDimensionRatio="1:1.5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <ScrollView
-        android:id="@+id/idProfileInfoScrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/idProfilePhoto">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/idProfileName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom" />
-
-            <TextView
-                android:id="@+id/idProfileAge"
-                android:layout_width="172dp"
-                android:layout_height="53dp"
-                android:layout_gravity="bottom" />
-
-            <TextView
-                android:id="@+id/idProfileSex"
-                android:layout_width="139dp"
-                android:layout_height="174dp"
-                android:layout_gravity="bottom" />
-
-            <TextView
-                android:id="@+id/idProfileDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/large_text" />
-        </LinearLayout>
-    </ScrollView>
-
-    <TextView
-        android:id="@+id/tv_heading"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
-        android:gravity="left|center_vertical"
-        android:paddingLeft="16dp"
-        android:text="Hey there"
-        android:textColor="@color/black"
-        android:textSize="16sp"
+    <include
+        android:id="@+id/includeToolbarProfile"
+        layout="@layout/main_action_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/idMainFrame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/profile_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/includeToolbarProfile">
+
+
+        <ImageView
+            android:id="@+id/idProfilePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars" />
+
+
+        <LinearLayout
+            android:id="@+id/LikedMeLayoutButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onPassClicked"
+                android:background="@color/triadic"
+                android:paddingHorizontal="15dp"
+                android:text="Не лайк" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onLikeClicked"
+                android:background="@color/triadic"
+                android:paddingHorizontal="15dp"
+                android:text="Лайк" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LikedBothLayoutButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onStartDialogClicked"
+                android:text="Начать диалог"
+                android:background="@color/triadic"
+                android:paddingHorizontal="15dp"
+                />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:id="@+id/idProfileInfoLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="450dp"
+                    android:background="@color/colorPrimary" />
+
+
+                <TextView
+                    android:id="@+id/idprofileUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/complementary"
+                    android:gravity="center"
+                    android:paddingLeft="18dp"
+                    android:paddingRight="18dp"
+                    android:scrollHorizontally="true"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:text="Emma Watson, 26" />
+
+                <TextView
+                    android:id="@+id/idProfileUserMainInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="serif"
+                    android:shadowColor="@color/white"
+                    android:shadowDx="1.5"
+                    android:shadowDy="1.3"
+                    android:shadowRadius="1.6"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    tools:text="female" />
+
+                <TextView
+                    android:id="@+id/idProfileUserDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2.5"
+                    android:shadowDy="2.3"
+                    android:shadowRadius="2.6"
+                    android:text="@string/app_name"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

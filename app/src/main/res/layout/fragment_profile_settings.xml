@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/idSignUpActivity"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/analogousSecondary"
-    tools:context=".activities.SignupActivity">
-
-    <include
-        android:id="@+id/includeToolbarSignUp"
-        layout="@layout/main_action_bar" />
+    android:clickable="true"
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tv_heading"
+        android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:text="Регистрация"
-        android:textColor="@color/black"
-        android:textSize="34sp"
+        android:text="Изменить данные профиля"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/includeToolbarSignUp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout3"
@@ -32,19 +29,19 @@
         android:theme="@style/TextInputLayoutAppearance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_heading">
+        app:layout_constraintTop_toBottomOf="@+id/heading">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/idUserName"
+            android:id="@+id/idEditUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:gravity="center"
             android:hint="Имя"
-            android:textColor="#000000"
             android:inputType="text"
             android:minWidth="270dp"
             android:padding="10dp"
+            android:textColor="#000000"
 
             android:textSize="15sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -59,7 +56,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/idUserCity"
+            android:id="@+id/idEditUserCity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -94,7 +91,7 @@
             android:textSize="15sp" />
 
         <Spinner
-            android:id="@+id/idUserGender"
+            android:id="@+id/idEditUserGender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:entries="@array/gender" />
@@ -110,7 +107,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/idUserAge"
+            android:id="@+id/idEditUserAge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -118,52 +115,6 @@
             android:hint="Возраст"
             android:textColor="#000000"
             android:inputType="number"
-            android:minWidth="270dp"
-            android:padding="10dp"
-            android:textSize="15sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:theme="@style/TextInputLayoutAppearance"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout6">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/idUserEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:gravity="center"
-            android:hint="Почта"
-            android:textColor="#000000"
-            android:inputType="textEmailAddress"
-            android:minWidth="270dp"
-            android:padding="10dp"
-            android:textSize="15sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:theme="@style/TextInputLayoutAppearance"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/idUserPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:gravity="center"
-            android:hint="Пароль"
-            android:textColor="#000000"
-            android:inputType="textPassword"
             android:minWidth="270dp"
             android:padding="10dp"
             android:textSize="15sp" />
@@ -181,35 +132,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout6">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/idUserDescription"
+            android:id="@+id/idEditUserDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="О себе"
-            android:textColor="#000000"
             android:maxHeight="270dp"
             android:minHeight="100dp"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:textColor="#000000" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/idRegisterButton"
-        style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/idApplyProfileSettingChangesButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:background="@color/colorPrimary"
-        android:onClick="performSignUp"
-        android:paddingHorizontal="10dp"
-        android:text="Зарегистироваться"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="18sp"
+        android:layout_height="55dp"
+        android:paddingHorizontal="30dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/triadic"
+        android:onClick="applySettingsChanges"
+        android:text="Применить"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

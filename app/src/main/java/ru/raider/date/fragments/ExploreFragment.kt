@@ -14,7 +14,9 @@ import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
 import com.yuyakaido.android.cardstackview.SwipeableMethod
-import kotlinx.android.synthetic.main.explore_fragment.*
+import kotlinx.android.synthetic.main.fragment_explore.*
+import kotlinx.android.synthetic.main.fragment_matches.*
+import kotlinx.android.synthetic.main.fragment_messages.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,27 +25,29 @@ import ru.raider.date.activities.MainActivity
 import ru.raider.date.adapter_models.ExploreUserItem
 import ru.raider.date.network_models.FetchUserResponse
 import ru.raider.date.network_models.SimpleResponse
+import ru.raider.date.network_models.NoConnectivityException
+import java.net.ConnectException
 
 class ExploreFragment : Fragment(), CardStackListener {
     private val adapter = GroupAdapter<GroupieViewHolder>()
     private lateinit var layoutManager: CardStackLayoutManager
-    private var needLoadUsers = true
+    private var haveAnyLoadedUsers = false
+
+    companion object {
+        fun newInstance(): ExploreFragment = ExploreFragment()
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.explore_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_explore, container, false)
     }
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState == null) {
-            // TODO: 30.10.2020  Добавить скроллинг инфо вниз при нажатии на карточку
-            // TODO: 30.10.2020 Добавить город и местоположение 
             layoutManager = CardStackLayoutManager(activity, this).apply {
                 setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
                 setOverlayInterpolator(LinearInterpolator())
                 setCanScrollVertical(false)
             }
-
             stack_view.layoutManager = layoutManager
             stack_view.adapter = adapter
             stack_view.itemAnimator.apply {
@@ -51,41 +55,74 @@ class ExploreFragment : Fragment(), CardStackListener {
                     supportsChangeAnimations = false
                 }
             }
-            if (needLoadUsers) {
-                Log.i("Dev", "First")
-                val mainActivity = activity as MainActivity
-                mainActivity.apiClient.getApiService(mainActivity).fetchUsers().enqueue(object : Callback<FetchUserResponse> {
-                    override fun onFailure(call: Call<FetchUserResponse>, t: Throwable) {
-                        Log.i("DEV", call.toString())
-                        Log.i("DEV", t.message.toString())
 
+            loadUsers()
+        } else {
+            Log.i("DEV", "ExploreFragment savedInstanceState != null")
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+    }
+
+
+    private fun loadUsers() {
+        if (haveAnyLoadedUsers) {
+            idExploreLoadingProgressBar.visibility = View.GONE
+        } else {
+            idExploreLoadingProgressBar.visibility = View.VISIBLE
+            val mainActivity = activity as MainActivity
+            mainActivity.apiClient.getApiService(mainActivity).fetchUsers().enqueue(object :
+                    Callback<FetchUserResponse> {
+                override fun onFailure(call: Call<FetchUserResponse>, t: Throwable) {
+                    if (!this@ExploreFragment.isVisible) {
+                        return
                     }
+                    idExploreLoadingProgressBar.visibility = View.GONE
 
-                    override fun onResponse(call: Call<FetchUserResponse>, response: Response<FetchUserResponse>) {
-                        val fetchUserResponse = response.body()
-                        fetchUserResponse?.let {
-                            for (user in it.result) {
+                    //  надо чтобы возвращался FetchUserResponse, переделать все ответы под один тип
+
+
+                    if (t is NoConnectivityException || t is ConnectException) {
+                        idNoExploreProfilesTextView.text = "NoConnection"
+                    } else {
+                        idNoExploreProfilesTextView.text = t.message.toString()
+                    }
+                    idNoExploreProfilesTextView.visibility = View.VISIBLE
+                }
+
+                override fun onResponse(
+                        call: Call<FetchUserResponse>,
+                        response: Response<FetchUserResponse>
+                ) {
+                    if (!this@ExploreFragment.isVisible) {
+                        return
+                    }
+                    idExploreLoadingProgressBar.visibility = View.GONE
+                    val fetchUserResponse = response.body()
+                    if (fetchUserResponse != null)
+                    {
+                        if (fetchUserResponse.result.size > 0) {
+                            haveAnyLoadedUsers = true
+                            for (user in fetchUserResponse.result) {
                                 adapter.add(ExploreUserItem(user))
                             }
-                            needLoadUsers = false
+                        } else {
+                            idNoExploreProfilesTextView.visibility = View.VISIBLE
                         }
+                    } else {
+                        idNoExploreProfilesTextView.text = "no response"
+                        idNoExploreProfilesTextView.visibility = View.VISIBLE
                     }
-                })
-            } else {
-                Log.i("Dev", "not First")
-            }
-        } else {
-            Log.i("DEV", "savedstate exists")
+                }
+            })
         }
-
-    }
-    companion object {
-        fun newInstance(): ExploreFragment = ExploreFragment()
     }
 
-    override fun onCardDragging(direction: Direction?, ratio: Float) {
+    override fun onCardDragging(direction: Direction?, ratio: Float) {}
 
-    }
 
     override fun onCardSwiped(direction: Direction?) {
         val user = adapter.getItem(0) as ExploreUserItem
@@ -102,18 +139,11 @@ class ExploreFragment : Fragment(), CardStackListener {
         })
     }
 
-    override fun onCardRewound() {
+    override fun onCardRewound() {}
 
-    }
+    override fun onCardCanceled() {}
 
-    override fun onCardCanceled() {
+    override fun onCardAppeared(view: View?, position: Int) {}
 
-    }
-
-    override fun onCardAppeared(view: View, position: Int) {
-    }
-
-    override fun onCardDisappeared(view: View?, position: Int) {
-
-    }
+    override fun onCardDisappeared(view: View?, position: Int) {}
 }

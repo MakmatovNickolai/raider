@@ -8,6 +8,15 @@
     android:orientation="vertical"
     tools:context=".activities.MainActivity">
 
+    <include
+        android:id="@+id/includeToolbar"
+        layout="@layout/main_action_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -18,8 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/includeToolbar">
 
     </FrameLayout>
 
@@ -27,14 +35,15 @@
         android:id="@+id/bottomNavigationMenu"
         android:layout_width="0dp"
         android:layout_height="65dp"
-        app:labelVisibilityMode="unlabeled"
-        android:background="@color/mainAppColor"
-        app:itemBackground="@color/mainAppColor"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
+        app:labelVisibilityMode="labeled"
+        android:background="@color/analogousPrimary"
+        app:itemTextColor="@color/test"
+        app:itemIconTint="@color/test"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/navigation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--app:itemBackground="@drawable/nav_item_drawable"-->

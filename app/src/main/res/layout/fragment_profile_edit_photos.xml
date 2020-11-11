@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
-    android:background="@color/mainAppColor">
+    android:background="@color/colorPrimary">
 
 
     <TextView
@@ -31,16 +31,31 @@
         android:id="@+id/idProfileEditPhotosRecycler"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/teal_700"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/teal_700"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:spanCount="3" />
+        app:spanCount="3">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/idApplyPhotoEditChanges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@color/triadic"
+        android:onClick="applyPhotoEditChanges"
+        android:paddingHorizontal="30dp"
+        android:text="Применить"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

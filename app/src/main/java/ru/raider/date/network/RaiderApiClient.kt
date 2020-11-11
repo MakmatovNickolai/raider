@@ -4,20 +4,22 @@ import android.content.Context
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.raider.date.utils.AuthInterceptor
 
 class RaiderApiClient {
+    companion object {
+        const val BASE_URL = "http://localhost:5000/"
+       // val BASE_URL = "https://raiderapi.herokuapp.com/"
+    }
     private lateinit var apiService: RaiderApiService
 
     fun getApiService(context: Context): RaiderApiService {
 
         // Initialize ApiService if not initialized yet
-        // TODO: 30.10.2020 Добавить обработку ошибок, если нет интернета 
+
         if (!::apiService.isInitialized) {
             val retrofit = Retrofit.Builder()
                     .client(okhttpClient(context))
-                    //.baseUrl("http://localhost:5000/")
-                     .baseUrl("https://raiderapi.herokuapp.com/")
+                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 
@@ -33,6 +35,7 @@ class RaiderApiClient {
     private fun okhttpClient(context: Context): OkHttpClient {
         return OkHttpClient.Builder()
                 .addInterceptor(AuthInterceptor(context))
+                .addInterceptor(NetworkConnectionInterceptor(context))
                 .build()
     }
 

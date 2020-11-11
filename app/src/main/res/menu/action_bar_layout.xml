@@ -4,13 +4,7 @@
     <item
         android:id="@+id/idActionProfile"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="My profile"
-        app:showAsAction="ifRoom">
-    </item>
-    <item
-        android:id="@+id/idLogOut"
-        android:icon="@drawable/ic_baseline_login_24"
-        android:title="Log out"
+        android:title="Мой профиль"
         app:showAsAction="ifRoom">
     </item>
 </menu>

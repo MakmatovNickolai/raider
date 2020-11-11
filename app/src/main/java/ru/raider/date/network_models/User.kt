@@ -7,13 +7,20 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class User (
         @SerializedName("id") val id: String? = "",
-        @SerializedName("name") val name: String,
-        @SerializedName("city") val city: String,
-        @SerializedName("age") val age: Int,
-        @SerializedName("picture_url") val pictureUrl: String,
-        @SerializedName("sex") val sex: String,
+        @SerializedName("name") var name: String,
+        @SerializedName("city") var city: String,
+        @SerializedName("age") var age: Int,
+        @SerializedName("description") var description: String? = "",
+        @SerializedName("main_picture_url") var main_picture_url: String? = "",
+        @SerializedName("picture_urls") var pictureUrls: MutableList<String>? = mutableListOf<String>(),
+        //var pictureUrls: MutableList<PictureUrl>? = mutableListOf<PictureUrl>(),
+        @SerializedName("sex") var sex: String,
         @SerializedName("email")
-        val email: String? = "",
+        var email: String? = "",
         @SerializedName("password")
-        val password: String? = ""
-): Parcelable
+        var password: String? = "",
+        @SerializedName("long")
+        var long: Double? = 0.0,
+        @SerializedName("lat")
+        var lat: Double? = 0.0
+) : Parcelable

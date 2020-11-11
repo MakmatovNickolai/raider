@@ -1,6 +1,5 @@
 package ru.raider.date
 
-import android.R
 import android.app.Application
 import android.util.Log
 import android.widget.TextView
@@ -15,9 +14,13 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
+import ru.raider.date.network_models.User
 
 
-class AmplifyClass : Application() {
+class App : Application() {
+    companion object {
+        lateinit var user: User
+    }
     override fun onCreate() {
         super.onCreate()
 

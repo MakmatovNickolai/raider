@@ -2,27 +2,25 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
 
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/idChangeProfilePhotosMenuItem"
-        android:title="Change photos"
-        app:showAsAction="never">
-    </item>
-    <item android:title="Change name"
-        android:id="@+id/idChangeProfileNameMenuItem"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/idChangeProfileAgeMenuItem"
-        android:title="Change age"
-        app:showAsAction="never">
-    </item>
-    <item
-        android:id="@+id/idChangeProfileSexMenuItem"
-        android:title="Change gender"
-        app:showAsAction="never">
-    </item>
-    <item
-        android:id="@+id/idChangeProfileCityMenuItem"
-        android:title="Change city"
-        app:showAsAction="never">
-    </item>
+    <group
+        android:id="@+id/idProfileMenuItemsGroup">
+
+        <item
+            android:id="@+id/idChangeProfilePhotosMenuItem"
+            android:title="Настройки фото"
+            app:showAsAction="never">
+        </item>
+        <item android:title="Настройки профиля"
+            android:id="@+id/idChangeProfileNameMenuItem"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/idLogOut"
+            android:icon="@drawable/ic_baseline_login_24"
+            android:title="Выйти"
+            app:showAsAction="ifRoom">
+        </item>
+    </group>
+
+
+
 </menu>

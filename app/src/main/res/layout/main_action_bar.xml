@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myapp="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    myapp:theme="@style/CustomTheme"
+    myapp:popupTheme="@style/CustomTheme"
+    android:background="@color/triadic"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize">
+
+    <TextView
+        android:id="@+id/isToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/complementary"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        tools:text="Emma Watson, 26" />
+</androidx.appcompat.widget.Toolbar>

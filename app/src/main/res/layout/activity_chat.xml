@@ -7,24 +7,79 @@
     android:background="@color/teal_700"
     tools:context=".activities.ChatActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatMessagesRecycler"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/inputMessage"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/idChatToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_weight="1"
+        android:background="@color/triadic"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/chatToolbarProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity ="center"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/complementary"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:scrollHorizontally="true"
+                android:text="TextView"
+                android:layout_marginRight="8dp"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/idChatProfileImage"
+                android:layout_width="54dp"
+                android:layout_marginVertical="3dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/emma_watson"
+                app:civ_border_color="@color/colorPrimary"
+                app:civ_border_width="1dp" />
+
+
+        </LinearLayout>
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatMessagesRecycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/inputMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idChatToolbar" />
 
     <Button
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
-        android:text="Отправить"
-        android:paddingLeft="5dp"
-        android:background="@color/mainAppColor"
+        android:background="@color/triadic"
         android:onClick="sendMessage"
+        android:textColor="@color/colorPrimary"
+        android:paddingHorizontal="5dp"
+        android:text="Отправить"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -32,13 +87,19 @@
         android:id="@+id/inputMessage"
         android:layout_width="0dp"
         android:layout_height="55dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:background="@color/analogousPrimary"
         android:ems="10"
-        android:background="@color/softGrey"
-        android:paddingLeft="10dp"
         android:hint="Введи сообщение"
-        android:inputType="text"
+        android:inputType="textMultiLine"
+        android:paddingLeft="10dp"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendButton"
         app:layout_constraintStart_toStartOf="parent" />
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

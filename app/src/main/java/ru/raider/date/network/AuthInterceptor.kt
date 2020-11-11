@@ -1,8 +1,9 @@
-package ru.raider.date.utils
+package ru.raider.date.network
 
 import android.content.Context
 import okhttp3.Interceptor
 import okhttp3.Response
+import ru.raider.date.utils.SessionManager
 import sha256
 
 
@@ -22,4 +23,6 @@ class AuthInterceptor(context: Context) : Interceptor {
         }
         return chain.proceed(request)
     }
+
+
 }
